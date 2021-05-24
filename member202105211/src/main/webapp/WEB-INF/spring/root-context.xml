@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+-
+<beans
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans">
+
+
+	-
+	<bean
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		id="dataSource">
+
+		<property value="oracle.jdbc.driver.OracleDriver"
+			name="driverClassName" />
+
+		<property value="jdbc:oracle:thin:@localhost:1521:XE"
+			name="url" />
+
+		<property value="spring0518" name="username" />
+
+		<property value="1234" name="password" />
+
+	</bean>
+
+
+	-
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean"
+		id="sqlSessionFactory">
+
+		<property name="dataSource" ref="dataSource" />
+
+		<property value="classpath:/mybatis-config.xml"
+			name="configLocation" />
+
+		<property value="classpath:com/icia/member/dao/mapper/*.xml"
+			name="mapperLocations" />
+
+	</bean>
+
+
+	-
+	<bean class="org.mybatis.spring.SqlSessionTemplate"
+		id="sqlSession">
+
+		<constructor-arg name="sqlSessionFactory"
+			ref="sqlSessionFactory" />
+
+	</bean>
+
+
+	-
+	<bean
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		id="transactionManager">
+
+		<property name="dataSource" ref="dataSource" />
+
+	</bean>
+
+
+	-
+	<bean
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		id="multipartResolver">
+
+		<property value="UTF-8" name="defaultEncoding" />
+
+		<property value="10000000" name="maxUploadSize" />
+
+	</bean>
+
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+
+</beans>
