@@ -26,6 +26,10 @@ public class MemberDAO {
 	public MemberDTO memberView(String mid) {
 		return sql.selectOne("mm.memberview", mid);
 	}
+	
+	public String idCheck(String mid) {
+		return sql.selectOne("mm.idcheck", mid);
+	}
 
 }
 

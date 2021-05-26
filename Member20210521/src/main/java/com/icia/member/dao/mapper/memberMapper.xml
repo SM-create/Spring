@@ -15,5 +15,9 @@
 		SELECT * FROM MEMBER210521 WHERE MID=#{mid}
 	</select>
 	
+	<select id="idcheck" parameterType="String" resultType="String">
+		SELECT MID FROM MEMBER210521 WHERE MID=#{mid}
+	</select>
+	
  </mapper>
  
