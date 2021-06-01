@@ -1,45 +1,182 @@
-package com.icia.study.service;
+package com.icia.member.service;
 
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.icia.member.dao.MemberDAO;
+import com.icia.member.dto.MemberDTO;
 
 @Service
-public class StudyService {
+public class MemberService {
 
-//	@Autowired
-//	private StudyDAO sdao;
-//	
-//	private modelAndview mav;
-//	
-//	public void insertDB(String param1) {
-//		sdao.insertDB(param1);
-//	}
-//	
-//	public ModelAndView selectDB(){
-//		mav= new ModelAndView();
-//		//DBì—ì„œ ì¡°íšŒí•œ ë‚´ìš©ì„ ArrayListì— ì €ì¥
-//		//ìš°ë³€: dbì—ì„œ ì¡°íšŒí•œ ê²°ê³¼ë¥¼ List ì— ë‹´ì•„ì˜´
-//		//ì£„ë³€: ë‹´ì•„ì˜¨ ë‚´ìš©ì„ dbList ë³€ìˆ˜ì— ì €ì¥
-//		//select*from ì¿¼ë¦¬ë¥¼ ì‹¤í–‰í•˜ë©´ ê²°ê³¼ëŠ” listë¡œ ë‹´ëŠ”ë‹¤.
-//		List<String> dbList =sdao.selectDB();
-//		//dbListì— ë‹´ê¸´ ê°’ì„ ê°€ì§€ê³  select.jspë¡œ ì´ë™í•´ì•¼í•¨.
-//		// ì–´ë–¤ ë°ì´í„°ë¥¼ ì–´ë–¤ í˜ì´ì§€ë¡œ ê°€ì§€ê³  ê°€ê¸° ìœ„í•´ mavê°ì²´ ì´ìš©
-//		
-//		//DBlist ë³€ìˆ˜ê°’ í™•ì¸
-//		system.out.println("dbListí™•ì¸");
-//		for(int i=0; i=dbList.size(); i++) {
-//			system.out.println(dbList.get(i));
-//		}
-//		
-//		//ë°ì´í„°ë¥¼ ë‹´ê¸°
-//		mav.addObject("dbList1", dbList);
-//		//ëª©ì ì§€ë¥¼ ì§€ì •í•˜ëŠ” ë‚´ìš©(JSP íŒŒì¼ ì´ë¦„)
-//		mav.setViewName("select");
-//		
-//		//ê·¸ëƒ¥ í™”ë©´ìœ¼ë¡œë§Œ ê°ˆë•ŒëŠ” ì»¨íŠ¸ë¡¤ëŸ¬ì—ì„œ string ë¦¬í„´ë§Œ í•˜ë©´ ë˜ì§€ë§Œ 
-//		// ì–´ë–¤ ë°ì´í„°ë¥¼ ê°€ì§€ê³  ê°ˆë•ŒëŠ” mav ì´ìš©
-//		
-//		//return null;
-//		return mav;
-//	}
+	@Autowired
+	private MemberDAO mdao;
+	
+	private ModelAndView mav;
+	
+	// ¼¼¼ÇÀ» »ç¿ëÇÏ±â À§ÇØ ¼¼¼Ç °´Ã¼ ¼±¾ğ 
+	@Autowired
+	private HttpSession session;
+	
+	public ModelAndView memberJoin(MemberDTO member) {
+		mav = new ModelAndView();
+		
+		// memberJoin È£Ãâ °á°ú¸¦ ¹Ş¾Æ¼­ insert ¼º°ø ¿©ºÎ¿¡ µû¶ó Ã³¸® 
+		int insertResult = 0;
+		insertResult = mdao.memberJoin(member);
+		if(insertResult > 0) {
+			// insertResult °¡ 0º¸´Ù Å©´Ù´Â °ÍÀº insert¸¦ ¼º°øÇß´Ù´Â ÀÇ¹ÌÀÌ±â ¶§¹®¿¡ È¸¿ø°¡ÀÔÀÌ ¿Ï·áµÈ°ÍÀ¸·Î ÆÇ´Ü 
+			mav.setViewName("memberlogin");
+		} else { 
+			// insertResult °¡ 0ÀÌ¶ó´Â ÀÇ¹Ì´Â insert°¡ ½ÇÆĞÇß´Ù´Â ÀÇ¹Ì
+			mav.setViewName("joinfail");
+		}
+		
+		return mav;
+	}
+
+	public ModelAndView memberList() {
+		mav = new ModelAndView();
+		List<MemberDTO> memberList = mdao.memberList();
+		
+		// memberList¿¡ DB Á¶È¸ °á°ú¸¦ ´ã¾Æ¼­ memberlist.jsp·Î ÀÌµ¿ 
+		mav.addObject("memberList", memberList);
+		mav.setViewName("memberlist1");
+		
+		return mav;
+	}
+
+	public ModelAndView memberView(String mid) {
+		mav = new ModelAndView();
+		
+		// ÇÑ¸í È¸¿ø¿¡ ´ëÇÑ Á¤º¸¸¸ ÇÊ¿äÇÏ±â ¶§¹®¿¡ DTO Å¸ÀÔÀÇ °´Ã¼·Î ¸®ÅÏÀ» ¹ŞÀ½. 
+		MemberDTO member = mdao.memberView(mid);
+		
+		// DB Á¶È¸ °á°ú¸¦ member¿¡ ¹Ş¾Ò°í.. 
+		// member¸¦ ´ã¾Æ¼­ memberview.jsp·Î °¡¾ßÇÔ. 
+		mav.addObject("result", member);
+		mav.setViewName("memberview");
+		
+		return mav;
+	}
+
+	public ModelAndView memberLogin(MemberDTO member) {
+		/*
+		 * ·Î±×ÀÎ Ã³¸® ·ÎÁ÷ °³³ä 
+		 * 	»ç¿ëÀÚ°¡ memberlogin.jsp¿¡¼­ ÀÔ·ÂÇÑ ¾ÆÀÌµğ, ºñ¹øÀÌ È¸¿ø°¡ÀÔÇÒ ¶§ DB¿¡ ÀúÀåµÈ ¾ÆÀÌµğ, ºñ¹ø°ú ÀÏÄ¡ÇÏ´ÂÁö¸¦ 
+		 * 	ÆÇ´ÜÇÏ¿© ÀÏÄ¡ÇÏ¸é ·Î±×ÀÎ ¼º°ø, ÀÏÄ¡ÇÏÁö ¾ÊÀ¸¸é ·Î±×ÀÎ ½ÇÆĞ·Î Ã³¸® 
+		 */
+		mav = new ModelAndView();
+		
+		String loginId = mdao.memberLogin(member);
+		
+		// loginId¿¡ °ªÀÌ ÀÖ´Ù¸é ¾ÆÀÌµğ, ºñ¹øÀÌ ¸ğµÎ ¸Â¾Ò´Ù´Â °ÍÀÌ°í,(·Î±×ÀÎ ¼º°øÀ¸·Î Ã³¸®) 
+		// loginId¿¡ °ªÀÌ ¾ø´Ù¸é Æ²·È´Ù´Â °Í (·Î±×ÀÎ ½ÇÆĞ·Î Ã³¸®)
+
+		// »ç¿ëÀÚ°¡ ·Î±×ÀÎÀ» ÇÏ°í ³ª¸é ·Î±×¾Æ¿ô ¶Ç´Â ºê¶ó¿ìÀú¸¦ ´İ±â Àü±îÁö´Â ·Î±×ÀÎÀ» À¯ÁöÇÏ°í ÀÖ¾î¾ß ÇÑ´Ù. 
+		// ÀÏ¹İÀûÀ¸·Î ·Î±×ÀÎ Á¤º¸(¾ÆÀÌµğ °ª) ´Â ¼¼¼Ç(session)¿¡ ÀúÀåÀ» ÇÏµµ·Ï ÇÔ. 
+		// ¼¼¼ÇÀº ¼­¹ö(ÅèÄ¹)¿¡¼­ °ü¸®ÇÏ´Â ÀÏÁ¾ÀÇ ÀúÀå°ø°£. 
+		// ¼¼¼Ç¿¡ µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ°Ô µÇ¸é ºê¶ó¿ìÀú¸¦ ´İ±â Àü±îÁö´Â ÆäÀÌÁö°¡ º¯°æµÇ¾îµµ µ¥ÀÌÅÍ´Â À¯ÁöµÊ. 
+		
+		if(loginId != null) {
+			// ·Î±×ÀÎ ¼º°ø Ã³¸® 
+			// ·Î±×ÀÎÇÑ È¸¿øÀÇ ¾ÆÀÌµğ¸¦ ¼¼¼Ç¿¡ ÀúÀå 
+			session.setAttribute("loginMember", loginId);
+			mav.setViewName("membermain");
+		} else {
+			// ·Î±×ÀÎ ½ÇÆĞ Ã³¸®
+			mav.setViewName("memberlogin");
+		}
+				
+		return mav;
+	}
+
+	public ModelAndView update() {
+		mav = new ModelAndView();
+		// ¿ìº¯ : ÇöÀç ·Î±×ÀÎÀ» ÇÑ »óÅÂ¿¡¼­ ¼öÁ¤ ¿äÃ»À» ÇÏ´Â °ÍÀÌ±â ¶§¹®¿¡ 
+		// 		 ¼¼¼Ç¿¡ ÀúÀåµÈ ·Î±×ÀÎ ¾ÆÀÌµğ °ªÀ» °¡Áö°í ¿È. 
+		//		 °¡Á®¿Í¼­ loginId º¯¼ö¿¡ ÀúÀå 
+		String loginId = (String) session.getAttribute("loginMember");
+		// °­Á¦Çüº¯È¯
+//		double a=0.0;
+//		int b=0;
+//		b=(int) a;
+		
+		// update() ¸Ş¼Òµå´Â ÇöÀç ·Î±×ÀÎÇÑ È¸¿øÀÇ ÀüÃ¼ Á¤º¸¸¦ DB·Î ºÎÅÍ °¡Á®¿Í¼­
+		// memberupdate.jsp¿¡ Ãâ·ÂÇÏ´Â °ÍÀÌ ¸ñÀûÀÌ±â ¶§¹®¿¡ memberview ¸Ş¼Òµå¸¦ »ç¿ëÇØµµ ¹®Á¦ ¾øÀ½. 
+//		MemberDTO memberUpdate = mdao.memberView(loginId);
+		MemberDTO memberUpdate = mdao.update(loginId);
+		
+		mav.addObject("member123", memberUpdate);
+		mav.setViewName("memberupdate");
+		
+		return mav;
+	}
+
+	public ModelAndView updateProcess(MemberDTO member) {
+		mav = new ModelAndView();
+		int updateResult = mdao.updateProcess(member);
+		// ¼öÁ¤ ¿Ï·á: membermain.jsp
+		// ¼öÁ¤ ½ÇÆĞ: updatefail.jsp
+		if(updateResult > 0) {
+			mav.setViewName("membermain");
+		} else {
+			mav.setViewName("updatefail");
+		}
+		return mav;
+	}
+
+	public ModelAndView memberDelete(String mid) {
+		mav = new ModelAndView();
+		mdao.memberDelete(mid);
+		// ¼öÁ¤ÀÌ ³¡³ª¸é memberlist.jsp¸¦ Ãâ·Â 
+		// memberlist.jsp´Â Ãâ·ÂÀÌ µÆÁö¸¸ µ¥ÀÌÅÍ´Â ¾È¶ä. 
+		// memberlist.jsp°¡ Á¦´ë·Î Ãâ·ÂµÇ·Á¸é controller¸¦ °ÅÃÄ¼­ DB Á¶È¸°á°ú¸¦ °¡Áö°í memberlist.jsp·Î °¡¾ßÇÏ´Âµ¥ 
+		// ¾Æ·¡¿Í °°ÀÌ memberlist.jsp¸¸ Ãâ·ÂÇÏ°Ô µÇ¸é µ¥ÀÌÅÍ´Â ¸ø°¡Á®°¡°Ô µÊ. 
+		
+//		mav.setViewName("memberlist");
+		// µû¶ó¼­ ÄÁÆ®·Ñ·¯ÀÇ ÁÖ¼Ò¸¦ ¿äÃ»ÇØ¾ß ÇÔ.
+		// ÄÁÆ®·Ñ·¯ÀÇ ÁÖ¼Ò¸¦ ¿äÃ»ÇÏ±â À§ÇÑ ¹æ¹ı 
+		mav.setViewName("redirect:/memberlist");
+		
+		
+		return mav;
+	}
+
+	public String idCheck(String mid) {
+		String checkResult = mdao.idCheck(mid);
+		/*
+		 * checkResult¿¡ °ªÀÌ ´ã°Ü ¿Â´Ù¸é ÇØ´ç ¾ÆÀÌµğ°¡ DB¿¡ Á¸ÀçÇÑ´Ù´Â °Í.(»ç¿ëºÒ°¡) 
+		 * checkResult¿¡ °ªÀÌ ¾ø´Ù¸é ÇØ´ç ¾ÆÀÌµğ°¡ DB¿¡ Á¸ÀçÇÏÁö ¾Ê´Â´Ù´Â °Í.(»ç¿ë°¡´É) 
+		 */
+		String result = "";
+		if(checkResult == null) {
+			result = "ok";
+		} else {
+			result = "no";
+		}
+		
+		System.out.println("¼­ºñ½ºÅ¬·¡½º Ã¼Å©°á°ú"+result);
+		
+		return result;
+	}
+
+	public MemberDTO memberViewAjax(String mid) {
+		MemberDTO member = mdao.memberView(mid);
+		return member;
+	}
 
 }
+
+
+
+
+
+
+
+

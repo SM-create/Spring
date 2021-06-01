@@ -1,46 +1,139 @@
-package com.icia.study.controller;
+package com.icia.member.controller;
 
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.icia.member.dto.MemberDTO;
+import com.icia.member.service.MemberService;
 
 @Controller
-public class StudyController {
+public class MemberController {
 	
-//	@Autowired
-//	private StudyService ss;
-//	
-//	//ë°ì´í„° í™”ë©´ ì •ë³´ë¥¼ ë‹´ì„ ìˆ˜ ìˆëŠ” modelandViewí´ë˜ìŠ¤ íƒ€ì…ì˜ ë³€ìˆ˜ mavì„ ì–¸
-//	private modelAndview mav;
-//	
-//	// ì„œë¡œ ë‹¤ë¥¸ ì»¨íŠ¸ë¡¤ëŸ¬ì— ìˆë‹¤ê³  í•˜ë”ë¼ë„ ì£¼ì†Œê°€ ê°™ì€ ë©”ì†Œë“œê°€ ìˆìœ¼ë©´ ì˜¤ë¥˜ ë°œìƒí•¨.
-//	// ì¦‰ ì£¼ì†Œë¡œ ì‚¬ìš©í•˜ëŠ” value= ì— ì“°ëŠ” ê°’ì€ ì¤‘ë³µë˜ë©´ ì•ˆë¨ 
-//	
-////	@RequestMapping(value="/")
-////	public String home() {
-////		return "home";
-////	}
-//	
-//	@RequestMapping(value="/insertpage")
-//	public String insertPage() {
-//		return "insert";
+	@Autowired 
+	private MemberService ms;
+	
+	private ModelAndView mav;
+	
+	@Autowired
+	private HttpSession session;
+	
+	// home.jsp¿¡¼­ joinpage ¸µÅ©Å¬¸¯ ¿äÃ»À» ÇÏ¸é 
+	// ¾Æ·¡ ¸Ş¼Òµå°¡ È£ÃâµÊ 
+	@RequestMapping(value="/joinpage")
+	public String joinPage() {
+		return "memberjoin";
+	}
+	
+//	@RequestMapping(value="/memberjoin")
+//	public ModelAndView memberJoin(@RequestParam("mid") String mid, 
+//									@RequestParam("mpassword") String mpassword,
+//									@RequestParam("mname") String mname, 
+//									@RequestParam("memail") String memail) {
+//		MemberDTO member = new MemberDTO();
+//		member.setMid(mid);
+//		member.setMpassword(mpassword);
+//		member.setMname(mname);
+//		member.setMemail(memail);
+//		
+//		mav = ms.memberJoin(member);
+//
+//		// È¸¿ø°¡ÀÔÀÌ ¿Ï·áµÇ¸é ·Î±×ÀÎ ÆäÀÌÁö°¡ Ãâ·ÂµÇµµ·Ï 
+//		return mav;
 //	}
-//	
-//	@RequestMapping(value="/insert")
-//	public void insertDB(@RequestParam("param1") String param1) {
-//		System.out.println(param1);
-//		ss.insertDB(param1);
-//	}
-//	
-//	@RequestMapping(value="/select")
-//	public ModelAndView select() {
-//		system.out.println("ì»¨íŠ¸ë¡¤ëŸ¬");
-//		//ì„œë¹„ìŠ¤ í´ë˜ìŠ¤ì˜ selectDB ë©”ì†Œë“œë¥¼ í˜¸ì¶œí•´ì„œ ê²°ê³¼ë¥¼ mavì— ì €ì¥
-//		mav=ss.selectFB();
-//		return mav;  //ì´ mavì—ëŠ” dbList select.jspë¡œ ê°€ì§€ê³  ê°€ëŠ” ë‚´ìš©ì´ ë“¤ì–´ ìˆìŒ.
-//	}
 	
-	
-	
-	
-	
+	@RequestMapping(value="/memberjoin")
+	public ModelAndView memberJoin(@ModelAttribute MemberDTO member) {
+		mav = ms.memberJoin(member);
 
+		// È¸¿ø°¡ÀÔÀÌ ¿Ï·áµÇ¸é ·Î±×ÀÎ ÆäÀÌÁö°¡ Ãâ·ÂµÇµµ·Ï 
+		return mav;
+	}
+	
+	@RequestMapping(value="/memberlist")
+	public ModelAndView memberList() {
+		mav = ms.memberList();
+		
+		return mav;
+	}
+	
+	@RequestMapping(value="/memberview")
+	public ModelAndView memberView(@RequestParam("mid") String mid) {
+		mav = ms.memberView(mid);
+		return mav;
+	}
+	
+	// ·Î±×ÀÎ È­¸é Ãâ·Â ¸Ş¼Òµå
+	@RequestMapping(value="/loginpage")
+	public String loginPage() {
+		return "memberlogin";
+	}
+	
+	// ·Î±×ÀÎ Ã³¸® ¸Ş¼Òµå 
+	@RequestMapping(value="/login")
+	public ModelAndView memberLogin(@ModelAttribute MemberDTO member) {
+		// member °´Ã¼¿¡´Â memberlogin.jsp ¿¡¼­ ÀÔ·ÂÇÑ mid, mpassword °ª¸¸ ´ã°ÜÀÖÀ½. 
+		System.out.println("login ¸Ş¼Òµå"+member.toString());
+		mav = ms.memberLogin(member);
+		return mav;
+	}
+	
+	// ·Î±×¾Æ¿ô Ã³¸® ¸Ş¼Òµå 
+	@RequestMapping(value="/logout")
+	public String logout() {
+		// ·Î±×¾Æ¿ôÀº ¼¼¼Ç¿¡ ÀúÀåµÈ ³»¿ëÀ» Áö¿î´Ù´Â °³³ä 
+		session.invalidate();
+		return "home";
+	}
+	
+	// È¸¿øÁ¤º¸ ¼öÁ¤ ¿äÃ» ¸Ş¼Òµå 
+	@RequestMapping(value="/memberupdate")
+	public ModelAndView update() {
+		mav = ms.update();
+		
+		return mav;
+	}
+	
+	// È¸¿øÁ¤º¸ ¼öÁ¤ Ã³¸® ¸Ş¼Òµå 
+	@RequestMapping(value="/updateprocess")
+	public ModelAndView updateProcess(@ModelAttribute MemberDTO member) {
+		mav = ms.updateProcess(member);
+		return mav;
+	}
+	
+	// È¸¿ø»èÁ¦ Ã³¸® ¸Ş¼Òµå
+	@RequestMapping(value="/memberdelete")
+	public ModelAndView memberDelete(@RequestParam("mid") String mid) {
+		mav = ms.memberDelete(mid);
+		return mav;
+	}
+	
+	// ¾ÆÀÌµğ Áßº¹È®ÀÎ ¸Ş¼Òµå 
+	@RequestMapping(value="/idcheck")
+	public @ResponseBody String idCheck(@RequestParam("mid") String mid) {
+		System.out.println("idCheck ¸Ş¼Òµå È£ÃâµÊ");
+		System.out.println("ÀÔ·Â id°ª "+mid);
+		String result = ms.idCheck(mid);
+		
+		return result;
+	}
+	
+	// ajax·Î »ó¼¼Á¶È¸ 
+	@RequestMapping(value="/memberviewajax")
+	public @ResponseBody MemberDTO memberViewAjax(
+							@RequestParam("mid") String mid) {
+		System.out.println("memberViewAjax ¸Ş¼Òµå È£ÃâµÊ");
+		System.out.println("Àü´Ş id°ª "+mid);
+		MemberDTO member = ms.memberViewAjax(mid);
+		System.out.println(member);
+		return member;
+	}
+	
+	
 }
