@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="tm"> 
+	
+	<insert id="Tmemberjoin" parameterType="testdto">
+		INSERT INTO MEMBER210602 (TID,TPASSWORD,TNAME,TPNUMBER, TEMAIL) VALUES
+		(#{tid},#{tpassword},#{tname},#{tpnumber},#{temail})
+	</insert>
+	
+	<select id="Tmemberlist" resultType="testdto">
+		SELECT*FROM MEMBER210602 ORDER BY TID ASC
+	</select>
+	
+	<select id="Tmemberview" parameterType="String" resultType="testdto">
+		SELECT*FROM MEMBER210602 WHERE TID=#{tid}
+	</select>
+	
+	<select id="Tidcheck" parameterType="String" resultType="String">
+		SELCT TID FROM MEBER210602 WHERE MID=#{tid}
+	</select>
+ </mapper>
+ 
