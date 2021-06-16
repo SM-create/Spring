@@ -10,8 +10,14 @@
 </h1>
 
 <P>  The time on the server is ${serverTime}. </P>
-	<a href="joinpage">회원가입페이지 </a><br><br>
+
+	<a href="joinpage1">회원가입페이지 </a><br><br>
+	
 	<a href="loginpage">로그인페이지 login</a><br><br>
-	<a href="memberlist">회원목록출력 view</a><br>
+	
+		<a href="memberlist">회원목록출력 </a><br> 
+		
+	로그인아이디: ${sessionScope.loginMember} <br>
+	
 </body>
 </html>

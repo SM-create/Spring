@@ -2,6 +2,8 @@ package com.icia.test.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,18 +17,26 @@ public class TestService {
 
 	@Autowired
 	private TestDAO tdao;
-	
 	private ModelAndView mav;
+
+	@Autowired
+	private HttpSession session;
 	
-	//memberjoin호출결과로 insert 성공 여부처리
-	public ModelAndView memberJoin(TestDTO test) {
+	//memberjoin 호출결과로 insert 성공 여부처리
+	
+	public ModelAndView memberJoin1(TestDTO member) {
 		mav = new ModelAndView();
 		
+		// memeberJoin1 호출 결과를 받아서 insert 성공 여부에 따라 처리
 		int insertResult=0;
-		insertResult = tdao.memberJoin(test);
+		
+		insertResult = tdao.memberJoin1(member);
+		
 		if(insertResult>0) {
-			mav.setViewName("memberlogin");
+			//성공시 memberlogin가 0보다 클경우
+			mav.setViewName("memberlogin1");
 		}else {
+			// insertResult가 0일 경우
 			mav.setViewName("joinfail");
 		}
 		
@@ -39,7 +49,7 @@ public class TestService {
 		
 		//memberList에 DB조회 결과를 담아서 memberList.jsp로 이동
 		mav.addObject("memberList", memberList);
-		mav.addObject("memberList");
+		mav.setViewName("memberList");
 		
 		return mav;
 		
@@ -76,9 +86,68 @@ public class TestService {
 		
 	}
 	
+	
 	public TestDTO memberViewAjax(String tid) {
 		TestDTO member = tdao.memberView(tid);
 		
 		return member;
 	}
+	
+
+	public ModelAndView memberLogin(TestDTO member) {
+
+		mav = new ModelAndView();
+		
+		String loginId = tdao.memberLogin(member);
+		
+		if(loginId != null) {
+			session.setAttribute("loginMember", loginId);
+			mav.setViewName("membermain");
+		}else {
+			mav.setViewName("memberlogin");
+		}
+		
+		return mav;
+	}
+
+	public ModelAndView update() {
+
+		mav = new ModelAndView();
+		
+		String loginId =(String) session.getAttribute("loginMember");
+		
+		TestDTO memberupdate =tdao.update(loginId);
+		
+		mav.addObject("member123", memberupdate);
+		mav.setViewName("memberupdate");
+			
+		return mav;
+	}
+	
+	public ModelAndView updateProcess(TestDTO member) {
+		mav = new ModelAndView();
+		int updateResult = tdao.updateProcess(member);
+		// 수정 완료: membermain.jsp
+		// 수정 실패: updatefail.jsp
+		if(updateResult > 0) {
+			mav.setViewName("membermain");
+		} else {
+			mav.setViewName("updatefail");
+		}
+		return mav;
+	}
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+

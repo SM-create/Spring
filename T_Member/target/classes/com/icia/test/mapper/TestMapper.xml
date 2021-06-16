@@ -4,21 +4,36 @@
  
  <mapper namespace="tm"> 
 	
-	<insert id="Tmemberjoin" parameterType="testdto">
-		INSERT INTO MEMBER210602 (TID,TPASSWORD,TNAME,TPNUMBER, TEMAIL) VALUES
-		(#{tid},#{tpassword},#{tname},#{tpnumber},#{temail})
+	<insert id="memberjoin" parameterType="testdto">
+		INSERT INTO MEMBER210602 (TID,TPASSWORD,TNAME,TPNUMBER, TEMAIL) VALUES(#{tid},#{tpassword},#{tname},#{tpnumber},#{temail})
 	</insert>
 	
-	<select id="Tmemberlist" resultType="testdto">
+ 	<select id="memberlist" resultType="testdto">
 		SELECT*FROM MEMBER210602 ORDER BY TID ASC
 	</select>
 	
-	<select id="Tmemberview" parameterType="String" resultType="testdto">
+	<select id="memberview" parameterType="String" resultType="testdto">
 		SELECT*FROM MEMBER210602 WHERE TID=#{tid}
 	</select>
 	
-	<select id="Tidcheck" parameterType="String" resultType="String">
-		SELCT TID FROM MEBER210602 WHERE MID=#{tid}
+		<select id="memberlogin" parameterType="testdto" resultType="String">
+		SELECT TID FROM MEMBER210602 WHERE TID=#{tid} AND TPASSWORD=#{tpassword}
 	</select>
+	
+	<select id="memberupdate" parameterType="String" resultType="testdto">
+		SELECT * FROM MEMBER210602 WHERE TID=#{loginId}
+	</select>
+	
+	<update id="updateprocess" parameterType="testdto">
+		UPDATE MEMBER210602 SET TEMAIL=#{temail} WHERE TID=#{tid}
+	</update>
+	
+	<delete id="memberdelete" parameterType="String">
+		DELETE FROM MEMBER210602 WHERE TID=#{tid}
+		</delete>
+	
+	<select id="idcheck" parameterType="String" resultType="String">
+		SELCT TID FROM MEBER210602 WHERE TID=#{tid}
+	</select> 
  </mapper>
  

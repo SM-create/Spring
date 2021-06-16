@@ -1,5 +1,9 @@
 package com.icia.test.controller;
 
+
+
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,24 +16,24 @@ import com.icia.test.dto.TestDTO;
 import com.icia.test.service.TestService;
 
 @Controller
-
 public class TestController {
 
 	@Autowired
-
 	private TestService ts;
-
 	private ModelAndView mav;
 
+	@Autowired
+	private HttpSession session;
+
 	// 회원가입
-	@RequestMapping(value = "/joinpage")
+	@RequestMapping(value = "/joinpage1")
 	public String joinpage() {
-		return "memberjoin";
+		return "memberjoin1";
 	}
 
 	/*
 	 * @RequestMapping(value="/memberjoin") public ModelAndView
-	 * T_memberjoin(@RequestParam("tid") String tid,
+	 * memberjoin(@RequestParam("tid") String tid,
 	 * 
 	 * @RequestParam("tpassword") String password,
 	 * 
@@ -39,19 +43,19 @@ public class TestController {
 	 * 
 	 * 프로필사진 추가
 	 * 
-	 * @RequestParam("temail") String teamail) { T_memberDTOmember = new
+	 * @RequestParam("temail") String teamail) { memberDTOmember = new
 	 * T_memberDTO(); member.setTid(tid); member.setTpassword(tpassword);
 	 * member.setTname(tname); member.setTpnumber(tpnumber);
 	 * member.setTeamail(teamil);
 	 * 
-	 * mav = ts.T_member }
+	 * mav = ts.T_member}
 	 * 
 	 * 
 	 */
 
-	@RequestMapping(value = "/memberjoin")
+	@RequestMapping(value = "/memberjoin1")
 	public ModelAndView memberjoin(@ModelAttribute TestDTO member) {
-		mav = ts.memberJoin(member);
+		mav = ts.memberJoin1(member);
 
 		// 회원가입 완료시 로그인 페이지 출력
 		return mav;
@@ -59,16 +63,55 @@ public class TestController {
 
 	@RequestMapping(value = "/memberlist")
 	public ModelAndView memberList() {
+		
 		mav = ts.memberList();
 
 		return mav;
 	}
 
 	@RequestMapping(value = "/memberview")
-	public ModelAndView memberview(@RequestParam("tid") String tid) {
+	public ModelAndView memberView(@RequestParam(value="tid", required=false, defaultValue="0") String tid) {
 
 		mav = ts.memberView(tid);
 
+		return mav;
+	}
+
+	// 로그인 처리 메소드
+	@RequestMapping(value = "/login")
+	public ModelAndView memberLogin(@ModelAttribute TestDTO member) {
+		System.out.println("login 메소드" + member.toString());
+		mav = ts.memberLogin(member);
+		return mav;
+	}
+
+	// 로그인 화면 출력 메소드
+	@RequestMapping(value = "/loginpage")
+	public String loginPage() {
+		return "memberlogin1";
+	}
+
+
+	// 로그아웃 처리 메소드
+	@RequestMapping(value = "/logout")
+	public String logout() {
+		// 로그아웃은 세션에 저장된 내용을 지운다는 개념
+		session.invalidate();
+		return "home";
+	}
+
+	// 회원정보 수정 처리 메소드 
+	@RequestMapping(value="/updateprocess")
+	public ModelAndView updateProcess(@ModelAttribute TestDTO member) {
+		mav = ts.updateProcess(member);
+		return mav;
+	}
+	
+	// 회원정보 수정 요청 메소드 
+	@RequestMapping(value="/memberupdate")
+	public ModelAndView update() {
+		mav = ts.update();
+		
 		return mav;
 	}
 

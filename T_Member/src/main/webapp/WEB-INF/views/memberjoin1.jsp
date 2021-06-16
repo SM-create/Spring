@@ -6,19 +6,21 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
 <script>
 	function idoverlap() {
 		/* 함수의 역할 
 			- 사용자가 입력한 id 값을 백엔드로 보내고 DB에서 중복여부를 확인 후 결과를 가져옴
 			- 비동기식으로 처리를 하기 위해 ajax를 사용함. 
+			
 		   ajax(Asynchronous javascript and xml)
 		    - 비동기식 처리를 위한 문법(화면과 주소가 바뀌는 것 없이 백엔드에 요청을 보내고 결과를 받을 수 있음) 
 		    - jquery 문법으로 이용할 예정 */
 		    
 		var inputId = document.getElementById('tid').value;
 		var checkResult = document.getElementById('checkresult');
-		
 		console.log(inputId);
+		
 		$.ajax({
 			type: 'post', // 전송방식(get,post,delete,patch,put)
 			url: 'idcheck', // 요청주소(컨트롤러에서 받는 주소)
@@ -50,7 +52,8 @@
 	비동기식 : 주소, 화면이 바뀌지 않고도 DB를 다녀옴 -->
 
 	<h2>memberjoin.jsp</h2>
-	<form action="memberjoin" method="post">
+	<form action = "memberjoin1" method="post">
+	
 		아이디: <input type="text" name="tid" id="tid" onkeyup="idoverlap()">
 					<span id="checkresult"></span><br>
 		비밀번호: <input type="text" name="tpassword"><br>
